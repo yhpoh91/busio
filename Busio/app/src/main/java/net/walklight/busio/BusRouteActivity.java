@@ -3,14 +3,23 @@ package net.walklight.busio;
 import android.app.Activity;
 import android.content.Context;
 import android.content.IntentSender;
+import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.RotateDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.OvalShape;
+import android.graphics.drawable.shapes.Shape;
 import android.location.Location;
 import android.os.Looper;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -41,6 +50,8 @@ import java.util.List;
 public class BusRouteActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     private ListView listView;
     private TextView tvGPS;
+    private View vDirection;
+    private View vDirectionBackground;
     private Context context;
     private BusStopAdapter adapter;
     private GoogleApiClient googleApiClient;
@@ -60,6 +71,8 @@ public class BusRouteActivity extends AppCompatActivity implements GoogleApiClie
         this.context = this;
         listView = (ListView) findViewById(R.id.lv_bus_routes);
         tvGPS = (TextView) findViewById(R.id.tv_gps);
+        vDirection = (View) findViewById(R.id.v_direction);
+        vDirectionBackground = (View) findViewById(R.id.v_direction_bg);
 
         callback = new TrackingCallback();
 
@@ -231,12 +244,26 @@ public class BusRouteActivity extends AppCompatActivity implements GoogleApiClie
                     int position = adapter.getCurrentItem();
                     if (position >= 0) {
                         listView.smoothScrollToPosition(position);
+
+//                        float bearing = ((BusStop) adapter.getItem(position)).getBearing(location);
+//                        Log.i("Bearing", Float.toString(bearing) + " of " + Integer.toString(position));
+//
+//                        Drawable directionDrawable = getDrawable(R.mipmap.ic_direction);
+//                        directionDrawable.setTint(Color.WHITE);
+//
+//                        RotateDrawable rotateDrawable = new RotateDrawable();
+//                        rotateDrawable.setDrawable(directionDrawable);
+//                        rotateDrawable.setFromDegrees(0);
+//                        rotateDrawable.setToDegrees(bearing);
+//
+//                        vDirection.setBackground(rotateDrawable);
+//                        vDirectionBackground.setBackground(getCircle(Color.BLUE));
                     }
 
                     Calendar c = Calendar.getInstance();
                     int seconds = c.get(Calendar.SECOND);
-                    ((BusRouteActivity) context).getTvGPS().setText("GPS" + Integer.toString(seconds) + " : " + Double.toString(location.getLongitude()) + ", " + Double.toString(location.getLatitude()));
-                    Log.i("GGPS", "GPS" + Integer.toString(seconds) + " : " + Double.toString(location.getLongitude()) + ", " + Double.toString(location.getLatitude()));
+                    ((BusRouteActivity) context).getTvGPS().setText(Double.toString(location.getLongitude()) + ", " + Double.toString(location.getLatitude()));
+//                    Log.i("GGPS", Double.toString(location.getLongitude()) + ", " + Double.toString(location.getLatitude()));
                 }
             });
         }
@@ -267,5 +294,16 @@ public class BusRouteActivity extends AppCompatActivity implements GoogleApiClie
     @Override
     public void onLocationChanged(Location location) {
         handleNewLocation(location);
+    }
+
+    public Drawable getCircle(int color){
+        Resources resources = context.getResources();
+        float pixel = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, resources.getDisplayMetrics());
+        Shape oval = new OvalShape();
+        oval.resize(pixel, pixel);
+        ShapeDrawable shapeDrawable = new ShapeDrawable(oval);
+        shapeDrawable.getPaint().setColor(color);
+
+        return shapeDrawable;
     }
 }

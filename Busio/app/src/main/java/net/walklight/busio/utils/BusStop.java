@@ -108,4 +108,8 @@ public class BusStop {
             }
         }
     }
+
+    public float getBearing(Location currentLocation){
+        return this.location.bearingTo(currentLocation);
+    }
 }

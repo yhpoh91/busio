@@ -121,6 +121,10 @@ public class BusStopAdapter extends BaseAdapter {
             }
         }
 
+        if(index == -1 && busStopList.size() > 0){
+            index = 0;
+        }
+
         return index;
     }
 }
