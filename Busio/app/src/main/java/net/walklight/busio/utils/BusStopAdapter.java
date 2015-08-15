@@ -45,8 +45,6 @@ public class BusStopAdapter extends BaseAdapter {
         if(busStop.arriving(currentLocation)){
             bellPressCallback.callback(busStop);
         }
-
-        this.notifyDataSetChanged();
     }
 
     @Override

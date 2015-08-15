@@ -17,6 +17,7 @@ public class GPSTracker extends Service implements LocationListener {
 
     private LocationManager locationManager;
     private Context context;
+    private Location location;
 
     public GPSTracker(Context context) {
         this.context = context;
@@ -24,23 +25,22 @@ public class GPSTracker extends Service implements LocationListener {
     }
 
     public Location getLocation(){
-        Location location = null;
 
         boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         boolean isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
         if(isGPSEnabled || isNetworkEnabled){
             if(isNetworkEnabled){
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 60000, 10, this);
-                Log.d("Location", "Network");
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 500, 5, this);
+//                Log.d("Location", "Network");
                 if(locationManager != null){
                     location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                 }
             }
 
             if(isGPSEnabled){
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000, 10, this);
-                Log.d("Location", "GPS");
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 5, this);
+//                Log.d("Location", "GPS");
                 if(locationManager != null){
                     location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 }
@@ -56,7 +56,8 @@ public class GPSTracker extends Service implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
-
+        Log.i("GPS", "Location changed");
+        this.location = location;
     }
 
     @Override
@@ -77,6 +78,10 @@ public class GPSTracker extends Service implements LocationListener {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    public Location getCurrentLocation(){
+        return location;
     }
 }
 

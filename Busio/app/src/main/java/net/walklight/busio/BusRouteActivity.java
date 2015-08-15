@@ -3,6 +3,7 @@ package net.walklight.busio;
 import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
+import android.os.Looper;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,14 +12,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import net.walklight.busio.utils.BusManager;
 import net.walklight.busio.utils.BusStop;
 import net.walklight.busio.utils.BusStopAdapter;
 import net.walklight.busio.utils.Callback;
 import net.walklight.busio.utils.GPSTracker;
+import net.walklight.busio.utils.GPSTrackingThread;
 import net.walklight.busio.utils.TrackingCallback;
-import net.walklight.busio.utils.WebTool;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,6 +33,8 @@ public class BusRouteActivity extends AppCompatActivity {
     private ListView listView;
     private Context context;
     private BusStopAdapter adapter;
+    private GPSTrackingThread gpsTrackingThread;
+    private GPSTracker gpsTracker = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +86,8 @@ public class BusRouteActivity extends AppCompatActivity {
                             }
                         }
                         listView.setAdapter(adapter);
+
+                        startGPSTrackingThread();
                     }
                 };
 
@@ -112,51 +118,70 @@ public class BusRouteActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public Location getCurrentLocation(){
-        GPSTracker gpsTracker = new GPSTracker(context);
-        Location location = gpsTracker.getLocation();
+    public Location getLocation(){
+        Location location = null;
+        if(gpsTracker == null) {
+            gpsTracker = new GPSTracker(context);
+            location = gpsTracker.getLocation();
+        }
+        else{
+            location = gpsTracker.getCurrentLocation();
+        }
         return location;
     }
 
     public void startGPSTrackingThread(){
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                TrackingCallback callback = new TrackingCallback();
+        gpsTrackingThread = new GPSTrackingThread(this);
+        gpsTrackingThread.startThread();
 
-                while(!callback.isDoneTracking()){
-                    adapter.updateBusStops(getCurrentLocation(), callback);
+        Log.i("BRA", "Tracking started");
+        Toast.makeText(context, "Tracking started", Toast.LENGTH_SHORT).show();
+    }
 
-                    final int position = adapter.getCurrentItem();
-                    ((Activity) context).runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if(position >= 0) {
-                                listView.smoothScrollToPosition(position);
-                            }
-                        }
-                    });
-                }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        gpsTrackingThread.stopThread();
+        Log.i("BRA", "Tracking stopped");
+    }
 
-                // Notify User
-                Runnable notificationRunnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        // Vibrate
-                        Vibrator vibrator = (Vibrator) context.getSystemService(VIBRATOR_SERVICE);
-                        if(vibrator.hasVibrator()){
-                            vibrator.vibrate(Constant.VIRBATION_LENGTH);
-                        }
+    public ListView getListView() {
+        return listView;
+    }
 
-                        // Ring
-                    }
-                };
+    public void setListView(ListView listView) {
+        this.listView = listView;
+    }
 
-                ((Activity) context).runOnUiThread(notificationRunnable);
-            }
-        };
+    public Context getContext() {
+        return context;
+    }
 
-        Thread thread = new Thread(runnable);
-        thread.start();
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
+    public BusStopAdapter getAdapter() {
+        return adapter;
+    }
+
+    public void setAdapter(BusStopAdapter adapter) {
+        this.adapter = adapter;
+    }
+
+    public GPSTrackingThread getGpsTrackingThread() {
+        return gpsTrackingThread;
+    }
+
+    public void setGpsTrackingThread(GPSTrackingThread gpsTrackingThread) {
+        this.gpsTrackingThread = gpsTrackingThread;
+    }
+
+    public GPSTracker getGpsTracker() {
+        return gpsTracker;
+    }
+
+    public void setGpsTracker(GPSTracker gpsTracker) {
+        this.gpsTracker = gpsTracker;
     }
 }
