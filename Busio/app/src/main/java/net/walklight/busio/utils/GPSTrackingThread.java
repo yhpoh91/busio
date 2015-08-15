@@ -10,6 +10,8 @@ import android.util.Log;
 import net.walklight.busio.BusRouteActivity;
 import net.walklight.busio.Constant;
 
+import java.util.Calendar;
+
 /**
  * Created by yeehuipoh on 8/15/15.
  */
@@ -32,7 +34,7 @@ public class GPSTrackingThread{
                 mockLocation.setLatitude(1.29736100001827);
                 while(!callback.isDoneTracking() && !cancelTracking){
 
-                    Location location = context.getLocation();
+                    final Location location = context.getLocation();
                     context.getAdapter().updateBusStops(location, callback);
                     Log.i("GPS", Double.toString(location.getLongitude()) + ", " + Double.toString(location.getLatitude()));
                     Log.i("GPS", Float.toString(location.distanceTo(mockLocation)) + " m");
@@ -45,6 +47,11 @@ public class GPSTrackingThread{
                             if (position >= 0) {
                                 context.getListView().smoothScrollToPosition(position);
                             }
+
+                            Calendar c = Calendar.getInstance();
+                            int seconds = c.get(Calendar.SECOND);
+                            ((BusRouteActivity) context).getTvGPS().setText("GPS" + Integer.toString(seconds) + " : " + Double.toString(location.getLongitude()) + ", " + Double.toString(location.getLatitude()));
+//                            context.getTvGPS().setText(Double.toString(location.getLongitude()) + ", " + Double.toString(location.getLatitude()));
                         }
                     });
 

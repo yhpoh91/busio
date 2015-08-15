@@ -24,11 +24,31 @@
             android:textSize="20sp"
             android:textColor="@android:color/black"/>
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/tv_busstop_list_item_id"
-            android:text="Bus Stop ID"/>
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_busstop_list_item_id"
+                android:text="Bus Stop ID"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:text="&#183;"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_busstop_list_item_distance"
+                android:text="800 m"/>
+        </LinearLayout>
+
 
     </LinearLayout>
     <ImageView

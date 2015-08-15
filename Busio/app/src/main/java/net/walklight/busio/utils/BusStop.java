@@ -11,6 +11,7 @@ public class BusStop {
     private String number;
     private String name;
     private Location location;
+    private float distance;
     private int status;
 
     public BusStop() {
@@ -18,6 +19,7 @@ public class BusStop {
         name = "Bus Stop";
         number = "00000";
         status = Constant.AWAY;
+        distance = 0;
     }
 
     public String getNumber() {
@@ -49,6 +51,10 @@ public class BusStop {
         this.location = location;
     }
 
+    public float getDistance() {
+        return distance;
+    }
+
     public int getStatus() {
         return status;
     }
@@ -56,7 +62,7 @@ public class BusStop {
     public boolean arriving(Location currentLocation){
         boolean isArriving = false;
 
-        float distance = location.distanceTo(currentLocation);
+        distance = location.distanceTo(currentLocation);
         if(distance < Constant.ARRIVING_DISTANCE){
             isArriving = true;
         }
@@ -67,7 +73,7 @@ public class BusStop {
     public boolean approaching(Location currentLocation){
         boolean isApproaching = false;
 
-        float distance = location.distanceTo(currentLocation);
+        distance = location.distanceTo(currentLocation);
         if(distance < Constant.APPROACHING_DISTANCE){
             isApproaching = true;
         }
@@ -86,6 +92,13 @@ public class BusStop {
             // Check for getting into arriving distance
             if(arriving(currentLocation)){
                 status = Constant.ARRIVED;
+            }
+            else if(approaching(currentLocation)){
+                status = Constant.APPROACHING;
+            }
+            else{
+                // Out of distance
+                status = Constant.AWAY;
             }
         }
         else if(status == Constant.ARRIVED){

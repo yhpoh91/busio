@@ -10,6 +10,10 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
+import net.walklight.busio.BusRouteActivity;
+
+import java.util.Calendar;
+
 /**
  * Created by yeehuipoh on 8/15/15.
  */
@@ -31,7 +35,7 @@ public class GPSTracker extends Service implements LocationListener {
 
         if(isGPSEnabled || isNetworkEnabled){
             if(isNetworkEnabled){
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 500, 5, this);
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, this);
 //                Log.d("Location", "Network");
                 if(locationManager != null){
                     location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
@@ -39,7 +43,7 @@ public class GPSTracker extends Service implements LocationListener {
             }
 
             if(isGPSEnabled){
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 5, this);
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, this);
 //                Log.d("Location", "GPS");
                 if(locationManager != null){
                     location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -58,6 +62,11 @@ public class GPSTracker extends Service implements LocationListener {
     public void onLocationChanged(Location location) {
         Log.i("GPS", "Location changed");
         this.location = location;
+        if(context instanceof BusRouteActivity){
+            Calendar c = Calendar.getInstance();
+            int seconds = c.get(Calendar.SECOND);
+            ((BusRouteActivity) context).getTvGPS().setText("OLC" + Integer.toString(seconds) + " : " + Double.toString(location.getLongitude()) + ", " + Double.toString(location.getLatitude()));
+        }
     }
 
     @Override
@@ -78,10 +87,6 @@ public class GPSTracker extends Service implements LocationListener {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
-    }
-
-    public Location getCurrentLocation(){
-        return location;
     }
 }
 

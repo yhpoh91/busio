@@ -69,6 +69,7 @@ public class BusStopAdapter extends BaseAdapter {
 
         TextView tvName = (TextView) rootView.findViewById(R.id.tv_busstop_list_item_name);
         TextView tvId = (TextView) rootView.findViewById(R.id.tv_busstop_list_item_id);
+        TextView tvDistance = (TextView) rootView.findViewById(R.id.tv_busstop_list_item_distance);
         ImageView ivStatus = (ImageView) rootView.findViewById(R.id.iv_busstop_list_item_status);
 
         Resources resources = context.getResources();
@@ -80,7 +81,8 @@ public class BusStopAdapter extends BaseAdapter {
 
         BusStop busStop = busStopList.get(i);
         tvName.setText(busStop.getName());
-        tvId.setText(busStop.getName());
+        tvId.setText(busStop.getNumber());
+        tvDistance.setText(Integer.toString((int) busStop.getDistance()) + " m");
 
         int status = busStop.getStatus();
 
