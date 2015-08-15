@@ -2,8 +2,10 @@ package net.walklight.busio.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.location.Location;
 import android.os.Looper;
 import android.os.Vibrator;
+import android.util.Log;
 
 import net.walklight.busio.BusRouteActivity;
 import net.walklight.busio.Constant;
@@ -25,9 +27,15 @@ public class GPSTrackingThread{
                 TrackingCallback callback = new TrackingCallback();
                 Looper.prepare();
 
+                Location mockLocation = new Location("");
+                mockLocation.setLongitude(103.77284799997702);
+                mockLocation.setLatitude(1.29736100001827);
                 while(!callback.isDoneTracking() && !cancelTracking){
 
-                    context.getAdapter().updateBusStops(context.getLocation(), callback);
+                    Location location = context.getLocation();
+                    context.getAdapter().updateBusStops(location, callback);
+                    Log.i("GPS", Double.toString(location.getLongitude()) + ", " + Double.toString(location.getLatitude()));
+                    Log.i("GPS", Float.toString(location.distanceTo(mockLocation)) + " m");
                     ((Activity) context).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

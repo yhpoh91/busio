@@ -12,9 +12,9 @@ public class Constant {
     public final static float APPROACHING_DISTANCE = 100;
 
     public final static int AWAY = 0;
-    public final static int APPROACHING = 0;
-    public final static int ARRIVED = 0;
-    public final static int PASSED = 0;
+    public final static int APPROACHING = 1;
+    public final static int ARRIVED = 2;
+    public final static int PASSED = 3;
 
     public final static int VIRBATION_LENGTH = 1000;
 }

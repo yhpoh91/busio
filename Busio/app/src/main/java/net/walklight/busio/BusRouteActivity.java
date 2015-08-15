@@ -125,7 +125,7 @@ public class BusRouteActivity extends AppCompatActivity {
             location = gpsTracker.getLocation();
         }
         else{
-            location = gpsTracker.getCurrentLocation();
+            location = gpsTracker.getLocation();
         }
         return location;
     }
